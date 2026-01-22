@@ -6,15 +6,22 @@ This project contains the configuration needed to spin up a Redpanda node inside
 
 - SASL/SCRAM authentication enabled by default.
 - Explicit topic creation during bootstrap (auto-create disabled).
-- Configuration for Admin users (`superuser`) and application users (`producer`/`consumer`).
-- ACLs configured to restrict access to topics.
+- Configuration for Admin users (`super_user`) and application users (`producer_user`/`consumer_user`).
+- ACLs configured to restrict access to the `test` topic.
 - Support for VS Code Dev Containers.
 - Automated deployment with GitHub Actions.
 
-## Prerequisites
+## Credentials and Topics
 
-- Docker and Docker Compose installed.
-- External network and volume created.
+By default, the following users and topics are created:
+
+| User | Password | Role |
+| :--- | :--- | :--- |
+| `super_user` | `secretpassword` | Administrator (all topics) |
+| `producer_user` | `producerpassword` | Producer for `test` topic |
+| `consumer_user` | `consumerpassword` | Consumer for `test` topic |
+
+- **Topic:** `test` (1 partition, 1 replica)
 
 ## How to run locally
 
@@ -51,7 +58,7 @@ docker logs -f redpanda-0
 
 ```bash
 docker exec -it redpanda-0 rpk cluster info \
-  -X user=superuser \
+  -X user=super_user \
   -X pass=secretpassword \
   -X sasl.mechanism=SCRAM-SHA-256
 ```
@@ -60,9 +67,11 @@ docker exec -it redpanda-0 rpk cluster info \
 
 ```bash
 docker exec -it redpanda-0 rpk topic list \
-  -X user=superuser \
+  -X user=super_user \
   -X pass=secretpassword \
   -X sasl.mechanism=SCRAM-SHA-256
 ```
 
 ## Docker Hub
+
+jesuscabrera1984/redpanda-sasl-bootstrap

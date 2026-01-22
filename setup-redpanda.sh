@@ -3,14 +3,13 @@
 # set -e
 
 # Environment Variables with defaults
-SUPER_USER="${REDPANDA_SUPERUSER_NAME:-superuser}"
+SUPER_USER="${REDPANDA_SUPERUSER_NAME:-super_user}"
 SUPER_PASS="${REDPANDA_SUPERUSER_PASSWORD:-secretpassword}"
-PRODUCER_USER="${PRODUCER_USER_NAME:-siscom-producer}"
+PRODUCER_USER="${PRODUCER_USER_NAME:-producer_user}"
 PRODUCER_PASS="${PRODUCER_USER_PASSWORD:-producerpassword}"
-CONSUMER_USER="${CONSUMER_USER_NAME:-siscom-consumer}"
+CONSUMER_USER="${CONSUMER_USER_NAME:-consumer_user}"
 CONSUMER_PASS="${CONSUMER_USER_PASSWORD:-consumerpassword}"
-LIVE_CONSUMER_USER="${LIVE_CONSUMER_USER_NAME:-siscom-live-consumer}"
-LIVE_CONSUMER_PASS="${LIVE_CONSUMER_USER_PASSWORD:-liveconsumerpassword}"
+
 
 # Helper function to wait for Redpanda Admin API
 wait_for_admin() {
@@ -83,22 +82,19 @@ wait_for_kafka "-X sasl.mechanism=SCRAM-SHA-256 -X user=$SUPER_USER -X pass=$SUP
 echo "[4/4] Creating App Users, Topics, and ACLs..."
 rpk security user create "$PRODUCER_USER" -p "$PRODUCER_PASS" --mechanism SCRAM-SHA-256 || echo "Producer user already exists"
 rpk security user create "$CONSUMER_USER" -p "$CONSUMER_PASS" --mechanism SCRAM-SHA-256 || echo "Consumer user already exists"
-rpk security user create "$LIVE_CONSUMER_USER" -p "$LIVE_CONSUMER_PASS" --mechanism SCRAM-SHA-256 || echo "Live consumer user already exists"
 
 # Create topics individually and ignore "already exists" errors
-for topic in siscom-messages siscom-minimal caudal-events caudal-live caudal-flows; do
+for topic in test; do
   rpk topic create "$topic" \
     --brokers localhost:9092 \
     -X sasl.mechanism=SCRAM-SHA-256 -X user="$SUPER_USER" -X pass="$SUPER_PASS" || echo "Topic $topic already exists"
 done
 
 # ACLs
-rpk security acl create --allow-principal "User:$PRODUCER_USER" --operation write,describe --topic siscom-messages -X user="$SUPER_USER" -X pass="$SUPER_PASS" || true
-rpk security acl create --allow-principal "User:$PRODUCER_USER" --operation write,describe --topic siscom-minimal -X user="$SUPER_USER" -X pass="$SUPER_PASS" || true
-rpk security acl create --allow-principal "User:$CONSUMER_USER" --operation read,describe --topic siscom-messages -X user="$SUPER_USER" -X pass="$SUPER_PASS" || true
-rpk security acl create --allow-principal "User:$CONSUMER_USER" --operation read,describe --group 'siscom-consumer-group' -X user="$SUPER_USER" -X pass="$SUPER_PASS" || true
-rpk security acl create --allow-principal "User:$LIVE_CONSUMER_USER" --operation read,describe --topic siscom-minimal -X user="$SUPER_USER" -X pass="$SUPER_PASS" || true
-rpk security acl create --allow-principal "User:$LIVE_CONSUMER_USER" --operation read,describe --group 'siscom-live-consumer-group' -X user="$SUPER_USER" -X pass="$SUPER_PASS" || true
+rpk security acl create --allow-principal "User:$PRODUCER_USER" --operation write,describe --topic test -X user="$SUPER_USER" -X pass="$SUPER_PASS" || true
+rpk security acl create --allow-principal "User:$CONSUMER_USER" --operation read,describe --topic test -X user="$SUPER_USER" -X pass="$SUPER_PASS" || true
+rpk security acl create --allow-principal "User:$CONSUMER_USER" --operation read,describe --group 'test-group' -X user="$SUPER_USER" -X pass="$SUPER_PASS" || true
+
 
 rpk cluster config set auto_create_topics_enabled false -X admin.hosts=127.0.0.1:9644 || true
 

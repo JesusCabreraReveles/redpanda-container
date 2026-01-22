@@ -27,5 +27,5 @@ jobs:
           context: .
           push: true
           tags: |
-            jesuscabrerareveles/redpanda-sasl-bootstrap:latest
-            jesuscabrerareveles/redpanda-sasl-bootstrap:${{ github.ref_name }}
+            jesuscabrera1984/redpanda-sasl-bootstrap:latest
+            jesuscabrera1984/redpanda-sasl-bootstrap:${{ github.ref_name }}
