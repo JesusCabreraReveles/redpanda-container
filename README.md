@@ -1,20 +1,20 @@
 # Redpanda Container Setup
 
-Este proyecto contiene la configuración necesaria para levantar un nodo de Redpanda dentro de un contenedor Docker, optimizado para desarrollo local y despliegue automático.
+This project contains the configuration needed to spin up a Redpanda node inside a Docker container, optimized for local development and automated deployment.
 
-## Características
+## Features
 
-- Autenticación SASL/SCRAM habilitada por defecto.
-- Creación explícita de tópicos durante el bootstrap (auto-create deshabilitado).
-- Configuración de usuarios Admin (`superuser`) y usuarios de aplicación (`producer`/`consumer`).
-- ACLs configuradas para restringir el acceso a los tópicos.
-- Soporte para VS Code Dev Containers.
-- Despliegue automático con GitHub Actions.
+- SASL/SCRAM authentication enabled by default.
+- Explicit topic creation during bootstrap (auto-create disabled).
+- Configuration for Admin users (`superuser`) and application users (`producer`/`consumer`).
+- ACLs configured to restrict access to topics.
+- Support for VS Code Dev Containers.
+- Automated deployment with GitHub Actions.
 
-## Requisitos Previos
+## Prerequisites
 
-- Docker y Docker Compose instalados.
-- Red y volumen externos creados.
+- Docker and Docker Compose installed.
+- External network and volume created.
 
 ## How to run locally
 
@@ -45,9 +45,9 @@ The setup runs automatically! You can monitor progress with:
 docker logs -f redpanda-0
 ```
 
-### 4. Comandos Útiles (RPK)
+### Useful Commands (RPK)
 
-**Ver información del cluster:**
+**View cluster info:**
 
 ```bash
 docker exec -it redpanda-0 rpk cluster info \
@@ -56,7 +56,7 @@ docker exec -it redpanda-0 rpk cluster info \
   -X sasl.mechanism=SCRAM-SHA-256
 ```
 
-**Listar tópicos:**
+**List topics:**
 
 ```bash
 docker exec -it redpanda-0 rpk topic list \
@@ -64,3 +64,5 @@ docker exec -it redpanda-0 rpk topic list \
   -X pass=secretpassword \
   -X sasl.mechanism=SCRAM-SHA-256
 ```
+
+## Docker Hub
